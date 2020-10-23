@@ -8,6 +8,6 @@ make all
 
 ## Running
 ``` shell
-./server
+./server [portnumber]
 ```
-The server should now be runnning on port 39408
+The server should now be runnning on the selected port
