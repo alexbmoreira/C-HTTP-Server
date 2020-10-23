@@ -17,7 +17,7 @@
 #include <sys/wait.h>
 #include <signal.h>
 
-#define PORT "39408"  // the port users will be connecting to
+// #define PORT "39408"  // the port users will be connecting to
 
 #define BACKLOG 10	 // how many pending connections queue will hold
 
@@ -46,8 +46,15 @@ void *get_in_addr(struct sockaddr *sa)
 	return &(((struct sockaddr_in6*)sa)->sin6_addr);
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
+	if(argc != 2)
+	{
+		printf("Error: No port");
+		exit(-1);
+	}
+
+	char* port = argv[1];
 	int sockfd, new_fd, numbytes;  // listen on sock_fd, new connection on new_fd
 	struct addrinfo hints, *servinfo, *p;
 	struct sockaddr_storage their_addr; // connector's address information
@@ -63,7 +70,7 @@ int main(void)
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE; // use my IP
 
-	if ((rv = getaddrinfo(NULL, PORT, &hints, &servinfo)) != 0) {
+	if ((rv = getaddrinfo(NULL, port, &hints, &servinfo)) != 0) {
 		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
 		return 1;
 	}
@@ -111,7 +118,7 @@ int main(void)
 		exit(1);
 	}
 
-	printf("server: waiting for connections...\nTry accessing /index.html in the browser\n");
+	printf("server: waiting for connections...\n");
 
 	while(1)  // main accept() loop
 	{
@@ -142,9 +149,6 @@ int main(void)
 			char *filename = strtok(buf, "/");
 			filename = strtok(NULL, " ");
 
-			// printf("%s\n-------------\n", buf);
-			// printf("%s\n", filename);
-
 			char* file_contents = "no file sent\n";
 			long length = 0;
 			FILE *fp = fopen (filename, "rb");
@@ -165,15 +169,10 @@ int main(void)
 
 			char *header = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
 
-			// printf("------------------------------------\n%s\n", header);
-
 			char *html = malloc(length + strlen(header));
-
-			// printf("------------------------------------\n%s\n", html);
 
 			strcpy(html, header);
 			strcat(html, file_contents);
-			// printf("------------------------------------\n%s\n\n\n", html);
 
 			if (send(new_fd, html, strlen(html), 0) == -1)
 			{
