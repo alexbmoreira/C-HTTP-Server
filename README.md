@@ -1,5 +1,4 @@
 # C-HTTP-Server
------
 A simple HTTP server capable of displaying html pages with inline CSS and Javascript
 
 ## Compiling
