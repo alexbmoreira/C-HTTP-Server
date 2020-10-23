@@ -1,7 +1,4 @@
-*.o
-*.html
-
-server# Prerequisites
+# Prerequisites
 *.d
 
 # Object files
