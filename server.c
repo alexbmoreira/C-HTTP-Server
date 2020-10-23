@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
 {
 	if(argc != 2)
 	{
-		printf("Error: No port");
+		printf("Error: No port\n");
 		exit(-1);
 	}
 
